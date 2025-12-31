@@ -4,3 +4,5 @@ __pycache__/
 .DS_Store
 config.py
 nba_ml_models.pkl
+bets_nba_PRO_*.xlsx
+~$*.xlsx
