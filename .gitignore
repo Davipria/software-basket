@@ -3,3 +3,4 @@ Resoconto.xlsm
 __pycache__/
 .DS_Store
 config.py
+nba_ml_models.pkl
