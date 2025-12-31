@@ -243,6 +243,11 @@ class NBADataCollector:
                 df[f'{stat}_proj'] = df[f'{stat}_ma5'] * (1 + (df['defense_factor'] * 0.05) + (df['pace_factor'] * 0.05))
             else:
                 df[f'{stat}_proj'] = df[f'{stat}_ma5']
+
+        # Medie mobili sui minuti per usarle come feature al posto di 'minutes' raw
+        if 'minutes' in df.columns:
+            df['minutes_ma5'] = df['minutes'].rolling(window=5, min_periods=1).mean()
+            df['minutes_ma10'] = df['minutes'].rolling(window=10, min_periods=1).mean()
         
         df['days_rest'] = df['date'].diff().dt.days.fillna(3) 
         df['is_back_to_back'] = (df['days_rest'] <= 1).astype(int)

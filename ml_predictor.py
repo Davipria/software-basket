@@ -31,7 +31,7 @@ class MLPredictor:
             f'{target_stat}_ma3', f'{target_stat}_ma5', f'{target_stat}_ma10',
             f'{target_stat}_std5', f'{target_stat}_trend',
             f'{target_stat}_proj', # Feature pesata (Difesa/Pace)
-            'minutes', 'is_home', 'is_back_to_back', 'days_rest',
+            'minutes_ma5', 'minutes_ma10', 'is_home', 'is_back_to_back', 'days_rest',
             'fg_pct', 'usage_proxy',
             'opp_def_rating', # FONDAMENTALE
             'opp_pace'        # FONDAMENTALE

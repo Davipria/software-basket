@@ -53,7 +53,7 @@ class BacktestingEngine:
         feature_cols = [
             f'{stat_type}_ma3', f'{stat_type}_ma5', f'{stat_type}_ma10',
             f'{stat_type}_std5', f'{stat_type}_trend',
-            'minutes', 'is_home', 'is_back_to_back', 'days_rest',
+            'minutes_ma5', 'minutes_ma10', 'is_home', 'is_back_to_back', 'days_rest',
             'fg_pct', 'usage_proxy'
         ]
         

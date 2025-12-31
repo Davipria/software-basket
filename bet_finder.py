@@ -161,7 +161,7 @@ class MLValueBetFinder:
                         odds = outcome.get('price')
                         if player_name and line and odds:
                             odds_val = float(odds)
-                            if not (1.7 <= odds_val <= 2.10): continue
+                            if not (1.75 <= odds_val <= 2.10): continue
                             props.append({
                                 'game_id': game_id, # Importante per il filtro spread
                                 'player': player_name,
@@ -202,15 +202,36 @@ class MLValueBetFinder:
         bet_type = bet_info['bet_type']
         game_id = bet_info.get('game_id') 
         
-        # --- FILTRO GARBAGE TIME (SPREAD) ---
+        # --- NUOVO FILTRO GARBAGE TIME (SPREAD) ---
         spread = self.game_spreads.get(game_id, 0.0)
-        # Se lo spread previsto è > 13.5 punti, alto rischio blowout
+        
+        # 1. BLOWOUT ESTREMO (> 15.5 punti):
+        # Partita troppo volatile/imprevedibile per QUALSIASI scommessa.
+        # Le rotazioni saltano completamente. Meglio evitare rischi inutili.
+        if spread > 15.5:
+            return None
+            
+        # 2. BLOWOUT MODERATO (> 13.5 punti):
+        # Rischio elevato che i titolari siedano prima.
+        # Evitiamo solo gli OVER (che richiedono minuti pieni).
         if spread > 13.5 and bet_type == 'Over':
-            return None # Scartiamo Over in partite a senso unico
+            return None
         
         player_data = self.data_collector.get_player_game_logs_extended(player_name, n_games=85)
         
         if player_data.empty or len(player_data) < 10: return None
+
+        # --- FILTRO LINEE BASSE (riduzione varianza) ---
+        if stat_type == 'points' and line < 7.5:
+            return None
+        if stat_type == 'rebounds' and line < 2.5:
+            return None
+
+        # --- FILTRO MINUTI MEDI (evitare panchinari instabili) ---
+        # Usiamo la media dei minuti dello storico recente; se troppo bassa, scartiamo.
+        avg_minutes = player_data['minutes'].mean()
+        if avg_minutes < 24.0:
+            return None
         
         ml_result = self.ml_predictor.predict(player_data, stat_type, player_name)
         if not ml_result: return None
